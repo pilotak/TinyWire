@@ -26,6 +26,7 @@
 	#include "twi.h"
 
 	void (*TinyTwi::user_onRequest)(void);
+	void (*TinyTwi::user_onPinInt)(void);
 	void (*TinyTwi::user_onReceive)(int);
 
 	TinyTwi::TinyTwi(){
@@ -42,6 +43,7 @@
 		master_mode = true;
 		Twi_attachSlaveTxEvent(onRequestService);
   		Twi_attachSlaveRxEvent(onReceiveService);
+  		Twi_attachPinIntEvent(onPinIntService);
 		Twi_master_init();
 	}
 
@@ -54,6 +56,7 @@
 		slave_addr = I2C_SLAVE_ADDR;
 		Twi_attachSlaveTxEvent(onRequestService);
   		Twi_attachSlaveRxEvent(onReceiveService);
+  		Twi_attachPinIntEvent(onPinIntService);
 		Twi_slave_init(I2C_SLAVE_ADDR);
 	}
 
@@ -150,6 +153,19 @@
 	  user_onRequest();
 	}
 
+
+	// behind the scenes function that is called when pin interrupt occurs
+	void TinyTwi::onPinIntService(void)
+	{
+	  // don't bother if user hasn't registered a callback
+	  if(!user_onPinInt){
+	    return;
+	  }
+	  // alert user program
+	  user_onPinInt();
+	}
+	
+
 	void TinyTwi::onReceive( void (*function)(int) )
 	{
 		user_onReceive = function;
@@ -158,6 +174,11 @@
     void TinyTwi::onRequest( void (*function)(void) )
     {
     	user_onRequest = function;
+	}
+
+    void TinyTwi::onPinInterrupt( void (*function)(void) )
+    {
+    	user_onPinInt = function;
 	}
 
 	/*-----------------------------------------------------

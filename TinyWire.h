@@ -57,8 +57,10 @@
 		uint8_t slave_addr=0;
 		static void (*user_onRequest)(void);
     	static void (*user_onReceive)(int);
+		static void (*user_onPinInt)(void);
     	static void onRequestService(void);
     	static void onReceiveService(int numBytes);
+    	static void onPinIntService(void);
 
 		public:
 		TinyTwi();
@@ -77,6 +79,7 @@
 		
 		void onReceive( void (*)(int) );
     	void onRequest( void (*)(void) );
+    	void onPinInterrupt( void (*)(void) );
 	};
 
 	extern TinyTwi TinyWire;

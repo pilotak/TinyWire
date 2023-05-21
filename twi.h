@@ -52,6 +52,7 @@ unsigned char USI_TWI_Get_State_Info( void );
 uint8_t Twi_master_requestFrom(uint8_t slave_addr, uint8_t numBytes);
 void Twi_attachSlaveRxEvent( void (*function)(int) );
 void Twi_attachSlaveTxEvent( void (*function)(void) );
+void Twi_attachPinIntEvent( void (*function)(void) );
 
 /*--------------------------------------------------------------
  buffer definitions

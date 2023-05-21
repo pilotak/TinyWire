@@ -85,6 +85,7 @@ static volatile uint8_t txTail;
 // Event function variables: called in case of a slave request or a slave receive
 static void (*twi_onSlaveTransmit)(void);
 static void (*twi_onSlaveReceive)(int);
+static void (*twi_onPinInt)(void);
 
 /*--------------------------------------------------------------
  local functions
@@ -450,6 +451,17 @@ void Twi_attachSlaveRxEvent( void (*function)(int) )
 void Twi_attachSlaveTxEvent( void (*function)(void) )
 {
   twi_onSlaveTransmit = function;
+}
+
+/* 
+ * Function twi_attachPinIntEvent
+ * Desc     sets function called after a PCINT0_vect is called
+ * Input    function: callback function to use
+ * Output   none
+ */
+void Twi_attachPinIntEvent( void (*function)(void) )
+{
+  twi_onPinInt = function;
 }
 
 void Twi_slave_init(uint8_t slave_addr)
@@ -833,6 +845,8 @@ ISR( PCINT0_vect )
       USISR |= 1<<USIPF; // resetting stop condition flag
     }
   }
+
+  twi_onPinInt();
 }
 
 #endif
